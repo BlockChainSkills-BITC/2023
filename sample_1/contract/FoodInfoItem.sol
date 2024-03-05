@@ -10,15 +10,15 @@ import "./Table.sol";
 // 4.	实现显示食品信息的方法
 
 contract FoodInfoItem{
-    //①保存食品流转过程中各个阶段的时间戳
-    //②保存食品流转过程各个阶段的用户名
-    //③保存食品流转过程各个阶段的用户地址信息（和用户一一对应）
-    //④保存食品流转过程中各个阶段的质量
-    //⑤食品名称
-    //⑥当前用户名称
-    //⑦质量（0=优质 1=合格 2=不合格）
-    //⑧状态（0:生产 1:分销 2:出售）
-    //⑨初始化owner
+    uint[] _timestamp;
+    string[] _traceName;
+    address[] _traceAddress;
+    uint8[] _traceQuality;
+    string _name;
+    string _currentTraceName;
+    uint8 _quality;
+    uint8 _status;
+    address _owner;
 
   constructor (string name, string traceName, uint8 quality, address producer) public {
         _timestamp.push(now);
@@ -32,14 +32,18 @@ contract FoodInfoItem{
         _owner = msg.sender;
     }
 
-    function addTraceInfoByDistributor( ①, uint8 quality) public returns(bool) {
+    function addTraceInfoByDistributor( string traceName,address distributor, uint8 quality) public returns(bool) {
         require(_status == 0 , "status must be producing");
+        require(_owner == msg.sender,"only trace contract can invoke");
         //② 参数判定：只有合约部署者才可以调用该方法
         _timestamp.push(now);
         _traceName.push(traceName);
         _currentTraceName = traceName;
         //③
+        _traceAddress.push(distributor);
         //④
+        _quality = quality;
+
         _traceQuality.push(_quality);
         _status = 1;
         return true;
@@ -64,14 +68,16 @@ contract FoodInfoItem{
         // return count;
     }
 
-    function addTraceInfoByRetailer( ①, uint8 quality) public returns(bool) {
+    function addTraceInfoByRetailer(string traceName ,address retailer, uint8 quality) public returns(bool) {
         require(_status == 1 , "status must be distributing");
+        require(_owner == msg.sender,"only trace contract can invoke");
         //② 参数判定：只有合约部署者才可以调用该方法
         _timestamp.push(now);
         _traceName.push(traceName);
         _currentTraceName = traceName;
         //③
         //④
+        _quality = quality;
         _traceQuality.push(_quality);
         _status = 2;
         return true;
