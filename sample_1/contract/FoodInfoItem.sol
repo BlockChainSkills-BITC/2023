@@ -32,14 +32,17 @@ contract FoodInfoItem{
         _owner = msg.sender;
     }
 
-    function addTraceInfoByDistributor( ①, uint8 quality) public returns(bool) {
+    function addTraceInfoByDistributor(string traceName, uint8 quality) public returns(bool) {
         require(_status == 0 , "status must be producing");
         //② 参数判定：只有合约部署者才可以调用该方法
+        require(msg.sender == _owner, "Only the contract owner can call this method");
         _timestamp.push(now);
         _traceName.push(traceName);
         _currentTraceName = traceName;
         //③
-        //④
+        _traceAddress.push(msg.sender);
+        //④1
+        _quality = quality;
         _traceQuality.push(_quality);
         _status = 1;
         return true;
@@ -67,11 +70,14 @@ contract FoodInfoItem{
     function addTraceInfoByRetailer( ①, uint8 quality) public returns(bool) {
         require(_status == 1 , "status must be distributing");
         //② 参数判定：只有合约部署者才可以调用该方法
+        require(msg.sender == _owner, "Only the contract owner can call this method");
         _timestamp.push(now);
         _traceName.push(traceName);
         _currentTraceName = traceName;
         //③
+        _traceAddress.push(msg.sender);
         //④
+        _quality = quality;
         _traceQuality.push(_quality);
         _status = 2;
         return true;
