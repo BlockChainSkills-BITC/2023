@@ -18,10 +18,9 @@ contract Trace is Producer, Distributor, Retailer{
         uint[]  foodList;
 
         //构造函数
-        constructor(address producer, address distributor, address retailer)
-	public Producer(producer)
-	Distributor(distributor)
-	Retailer(retailer){
+        constructor(address producer, address distributor, address retailer) public Producer(producer)
+            Distributor(distributor)
+	        Retailer(retailer){
 
         }
         //生成食品溯源信息接口
@@ -29,15 +28,19 @@ contract Trace is Producer, Distributor, Retailer{
         //name 食品名称
         //traceNumber 食品溯源id
         //traceName 当前用户名称
-	//quality 当前食品质量
-        function newFood(①, string traceName, uint8 quality)
-	public ② returns(③)
+	    //quality 当前食品质量
+        function newFood(string name, uint256 traceNumber,string traceName, uint8 quality) public onlyProducer returns(address)
         {
             //④ 条件判定：traceNumber 已经存在
+            require(traceNumber == address(0), "traceNumber already exists");
             //⑤
+            FoodInfoItem food = new FoodInfoItem(name, traceName, quality, msg.sender);
             //⑥
+            foods[traceNumber] = address(food);
             //⑦
+            foodList.push(traceNumber);
             //⑧
+            return address(food);
 
             // int count = 0;
             // Table table = tf.openTable(TABLE_NAME);
