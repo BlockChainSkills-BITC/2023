@@ -6,7 +6,7 @@ const Farm = {
     return {
       popup: false, // 创建蔬菜弹窗
       foodList: [], // 食品信息
-  }
+    }
   },
   computed: {
     // 当前页渲染数据
@@ -70,22 +70,22 @@ const Farm = {
         method: 'get',
         url: `/producing`
       })
-      .then(ret => {
-        // 对数据进行处理
-        this.foodList = ret.data
-          .map(item => ({
-            ...item,
-            date: dateTime(item.timestamp),
-            traceNumber: item.traceNumber,
-            traceName: item.from,
-            foodName: item.name
-          }))
-          .reverse();     
-        this.$emit('total', this.foodList.length);
-      })
-      .catch(err => {
-        console.log(err)
-      })
+          .then(ret => {
+            // 对数据进行处理
+            this.foodList = ret.data
+                .map(item => ({
+                  ...item,
+                  date: dateTime(item.timestamp),
+                  traceNumber: item.traceNumber,
+                  traceName: item.from,
+                  foodName: item.name
+                }))
+                .reverse();
+            this.$emit('total', this.foodList.length);
+          })
+          .catch(err => {
+            console.log(err)
+          })
     },
     // 添加蔬菜弹窗
     handlePopup(val) {
@@ -95,42 +95,42 @@ const Farm = {
     formSubmit(val) {
       axios({
         method: 'post',
-        url: '/produce', 
+        url: '/produce',
         data: {
           ...val,
           quality: parseInt(val.quality),
           user: 0
         }
       })
-      .then(ret => {
-        if (ret.data.ret !== 1) {
-          // 已有溯源码校验
-          if (ret.data.ret === 0 && ret.data.msg === 'traceNumber already exist') {
+          .then(ret => {
+            if (ret.data.ret !== 1) {
+              // 已有溯源码校验
+              if (ret.data.ret === 0 && ret.data.msg === 'traceNumber already exist') {
+                this.$message({
+                  message: '该溯源码已存在，请重新创建',
+                  type: 'error',
+                  center: true
+                });
+              } else {
+                this.$message({
+                  message: '提交失败',
+                  type: 'error',
+                  center: true
+                });
+              }
+              return
+            }
             this.$message({
-              message: '该溯源码已存在，请重新创建',
-              type: 'error',
+              message: '提交成功',
+              type: 'success',
               center: true
             });
-          } else {
-            this.$message({
-              message: '提交失败',
-              type: 'error',
-              center: true
-            });
-          }
-          return
-        }
-        this.$message({
-          message: '提交成功',
-          type: 'success',
-          center: true
-        });
-        // 提交成功后重新获取数据
-        this.getData();
-      })
-      .catch(err => {
-        console.log(err)
-      })
+            // 提交成功后重新获取数据
+            this.getData();
+          })
+          .catch(err => {
+            console.log(err)
+          })
       this.popup = false;
     }
   }
@@ -223,12 +223,12 @@ const Consumer = {
         method: 'get',
         url: `/trace?traceNumber=${this.form.traceNumber}`
       })
-      .then(ret => {
-        this.foodDetail = ret.data || []
-      })
-      .catch(err => {
-        console.log(err);
-      })
+          .then(ret => {
+            this.foodDetail = ret.data || []
+          })
+          .catch(err => {
+            console.log(err);
+          })
     }
   }
 }

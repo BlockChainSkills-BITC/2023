@@ -15,12 +15,12 @@ const Header = {
   props: ['login', 'user'],
   template: `
     <div class="header">
-      <img src="选手填写部分" />
-      <h3>选手填写部分</h3>
-      <span v-if="login" class="user-name">选手填写部分</span>
+      <img src="./static/images/logo.png" />
+      <h3>食品溯源平台</h3>
+      <span v-if="login" class="user-name">{{ user }}</span>
     </div>
     `
-  }
+}
 
 // 食品详情展示
 const FoodDetail = {
@@ -327,22 +327,22 @@ const mixin = {
         method: 'get',
         url: `/${pathname}`
       })
-      .then(ret => {
-        this.foodList = ret.data
-          .map(item => {
-            let quality = item.quality === 0 ? '优质' : item.quality === 1 ? '合格' : '不合格'
-            return ({
-              ...item,
-              date: dateTime(item.timestamp),
-              quality,
-            })
+          .then(ret => {
+            this.foodList = ret.data
+                .map(item => {
+                  let quality = item.quality === 0 ? '优质' : item.quality === 1 ? '合格' : '不合格'
+                  return ({
+                    ...item,
+                    date: dateTime(item.timestamp),
+                    quality,
+                  })
+                })
+                .reverse();
+            this.$emit('total', this.foodList.length);
           })
-          .reverse();
-        this.$emit('total', this.foodList.length);
-      })
-      .catch(err => {
-        console.log(err)
-      })
+          .catch(err => {
+            console.log(err)
+          })
     },
     // 表格中食品详情弹窗
     handlePopover(data) {
@@ -356,12 +356,12 @@ const mixin = {
         method: 'get',
         url: `/food?traceNumber=${data.traceNumber}`
       })
-      .then(ret => {
-        this.popoverData = ret.data;
-      })
-      .catch(err => {
-        console.log(err)
-      })
+          .then(ret => {
+            this.popoverData = ret.data;
+          })
+          .catch(err => {
+            console.log(err)
+          })
     },
     // 处理添加蔬菜信息
     addVegetable() {
@@ -373,13 +373,13 @@ const mixin = {
         method: 'get',
         url: `/trace?traceNumber=${this.traceNumber}`
       })
-      .then(ret => {
-        this.foodDetail = ret.data || []
-        this.popup = true;
-      })
-      .catch(err => {
-        console.log(err)
-      })
+          .then(ret => {
+            this.foodDetail = ret.data || []
+            this.popup = true;
+          })
+          .catch(err => {
+            console.log(err)
+          })
     },
     // 添加蔬菜信息弹窗
     handlePopup(val) {
@@ -390,32 +390,32 @@ const mixin = {
       let pathname = this.user === 1 ? 'adddistribution' : 'addretail';
       axios({
         method: 'post',
-        url: `/${pathname}`, 
+        url: `/${pathname}`,
         data: {
           ...val,
           quality: parseInt(val.quality),
           traceNumber: this.foodDetail[0].traceNumber
         }
       })
-      .then(ret => {
-        if (ret.data.ret !== 1) {
-          this.$message({
-            message: '提交失败',
-            type: 'error',
-            center: true
-          });
-          return
-        }
-        this.$message({
-          message: '提交成功',
-          type: 'success',
-          center: true
-        });
-        this.getData();
-      })
-      .catch(err => {
-        console.log(err)
-      })
+          .then(ret => {
+            if (ret.data.ret !== 1) {
+              this.$message({
+                message: '提交失败',
+                type: 'error',
+                center: true
+              });
+              return
+            }
+            this.$message({
+              message: '提交成功',
+              type: 'success',
+              center: true
+            });
+            this.getData();
+          })
+          .catch(err => {
+            console.log(err)
+          })
       this.popup = false;
     }
   }
@@ -503,6 +503,3 @@ const CreateVegetable = {
     },
   }
 }
-
-
-

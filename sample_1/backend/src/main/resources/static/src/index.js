@@ -5,8 +5,7 @@ const vue = new Vue({
     Login,
   },
   // 实例绑定的元素
-  el: '#app',
-  data: {
+  el: '#app',  data: {
     currPage: 1, // 当前页
     pageSize: 10, // 每页显示数据
     total: 0, // 总数据
