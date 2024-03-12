@@ -25,7 +25,7 @@ import java.util.Properties;
 
 @Controller
 public class IndexController {
-    //填写WeBASE-Front地址，用于后续交互
+ //填写WeBASE-Front地址，用于后续交互
     private static String URL;
 
     private static String CONTRACT_NAME = "Trace";
@@ -105,20 +105,21 @@ public class IndexController {
      * @return：添加食品生产信息结果
      */
     @ResponseBody
-    @PostMapping(选手填写部分, produces=MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/produce", produces=MediaType.APPLICATION_JSON_VALUE)
     public String produce(@RequestBody JSONObject jsonParam) {
         //声明返回对象
         JSONObject _outPutObj = new JSONObject();
 
         //生产商生产食品
         if(jsonParam == null){
-            选手填写部分;
+            _outPutObj.put("error","invalid parameter");
+            return _outPutObj.toJSONString();
         }
 
-        int trace_number = 选手填写部分;
-        String food_name = 选手填写部分;
-        String trace_name = 选手填写部分;
-        int quality = 选手填写部分;
+        int trace_number = (int)jsonParam.get("traceNumber");
+        String food_name = (String)jsonParam.get("foodName");
+        String trace_name = (String)jsonParam.get("traceName");
+        int quality = (int)jsonParam.get("quality");
 
         JSONArray params = JSONArray.parseArray("[\""+food_name+"\","+trace_number+",\""+trace_name+"\","+quality+"]");
         JSONObject _jsonObj = new JSONObject();
@@ -126,20 +127,20 @@ public class IndexController {
         _jsonObj.put("contractAddress",CONTRACT_ADDRESS);
         _jsonObj.put("contractAbi",JSONArray.parseArray(CONTRACT_ABI));
         _jsonObj.put("user",PRODUCER_ADDRESS);
-        _jsonObj.put("funcName",选手填写部分);
-        _jsonObj.put("funcParam",选手填写部分);
+        _jsonObj.put("funcName","newFood");
+        _jsonObj.put("funcParam",params.toJSONString());
 
-        String responseStr = httpPost(URL,选手填写部分);
+        String responseStr = httpPost(URL,_jsonObj.toJSONString());
         JSONObject responseJsonObj = JSON.parseObject(responseStr);
         String msg = responseJsonObj.getString("message");
         if (msg.equals("Success")){
-            _outPutObj.put("ret",选手填写部分);
+            _outPutObj.put("ret",1);
             _outPutObj.put("msg",msg);
         }else{
-            _outPutObj.put("ret",选手填写部分);
+            _outPutObj.put("ret",0);
             _outPutObj.put("msg",msg);
         }
-        return 选手填写部分;
+        return _outPutObj.toJSONString();
     }
 
     /**
@@ -150,18 +151,19 @@ public class IndexController {
      * @return：中间商添加食品流转信息结果
      */
     @ResponseBody
-    @PostMapping(选手填写部分, produces=MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/adddistributor", produces=MediaType.APPLICATION_JSON_VALUE)
     public String add_trace_by_distrubutor(@RequestBody JSONObject jsonParam) {
         //声明返回对象
         JSONObject _outPutObj = new JSONObject();
 
         if(jsonParam == null){
-            选手填写部分;
+            _outPutObj.put("error","invalid parameter");
+            return _outPutObj.toJSONString();
         }
 
-        String trace_number = 选手填写部分;
-        String trace_name = 选手填写部分;
-        int quality = 选手填写部分;
+        String trace_number = (String)jsonParam.get("traceNumber");
+        String trace_name = (String) jsonParam.get("traceName");
+        int quality = (int)jsonParam.get("quality");
 
         JSONArray params = JSONArray.parseArray("["+trace_number+",\""+trace_name+"\","+quality+"]");
         JSONObject _jsonObj = new JSONObject();
@@ -169,21 +171,21 @@ public class IndexController {
         _jsonObj.put("contractAddress",CONTRACT_ADDRESS);
         _jsonObj.put("contractAbi",JSONArray.parseArray(CONTRACT_ABI));
         _jsonObj.put("user",DISTRIBUTOR_ADDRESS);
-        _jsonObj.put("funcName",选手填写部分);
-        _jsonObj.put("funcParam",选手填写部分);
+        _jsonObj.put("funcName","addTraceInfoByDistributor");
+        _jsonObj.put("funcParam",params);
 
-        String responseStr = httpPost(URL,选手填写部分);
+        String responseStr = httpPost(URL,_jsonObj.toJSONString());
         JSONObject responseJsonObj = JSON.parseObject(responseStr);
         String msg = responseJsonObj.getString("message");
         if (msg.equals("Success")){
-            _outPutObj.put("ret",选手填写部分);
+            _outPutObj.put("ret",1);
             _outPutObj.put("msg",msg);
         }else{
-            _outPutObj.put("ret",选手填写部分);
+            _outPutObj.put("ret",0);
             _outPutObj.put("msg",msg);
         }
 
-        return 选手填写部分;
+        return _outPutObj.toJSONString();
 
     }
 
@@ -262,18 +264,19 @@ public class IndexController {
      * @return 对应食品的溯源信息
      */
     @ResponseBody
-    @GetMapping(选手填写部分, produces=MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/trace", produces=MediaType.APPLICATION_JSON_VALUE)
     public String trace(String traceNumber){
 
         JSONObject _outPut = new JSONObject();
 
         if (Integer.parseInt(traceNumber) <= 0){
-            选手填写部分
+            _outPut.put("error","invalid parameter");
+            return _outPut.toJSONString();
         }
 
         List res = get_trace(traceNumber);
         JSONArray o = new JSONArray(res);
-        return 选手填写部分;
+        return _outPut.toJSONString();
 
     }
 
@@ -412,7 +415,7 @@ public class IndexController {
         _jsonObj.put("contractAbi",JSONArray.parseArray(CONTRACT_ABI));
         _jsonObj.put("user","");
         _jsonObj.put("funcName","getFood");
-        _jsonObj.put("funcParam",params);
+        _jsonObj.put("funcParam",params.toJSONString());
 
         String responseStr = httpPost(URL,_jsonObj.toJSONString());
         JSONArray food  = JSON.parseArray(responseStr);
@@ -434,7 +437,7 @@ public class IndexController {
      * @param traceNumber 食品溯源id，食品溯源过程中的标识符
      * @return 对应食品的溯源信息
      */
-    选手填写部分 JSONArray get_trace(String traceNumber){
+    private JSONArray get_trace(String traceNumber){
         //获取食品基本信息
         JSONArray params = JSONArray.parseArray("["+traceNumber+"]");
 
@@ -443,8 +446,8 @@ public class IndexController {
         _jsonObj.put("contractAddress",CONTRACT_ADDRESS);
         _jsonObj.put("contractAbi",JSONArray.parseArray(CONTRACT_ABI));
         _jsonObj.put("user","");
-        _jsonObj.put("funcName",选手填写部分);
-        _jsonObj.put("funcParam",选手填写部分);
+        _jsonObj.put("funcName","getFood");
+        _jsonObj.put("funcParam",params);
 
         String responseStr = httpPost(URL,_jsonObj.toJSONString());
         JSONArray food  = JSON.parseArray(responseStr);
@@ -456,38 +459,38 @@ public class IndexController {
         _jsonObj2.put("contractAbi",JSONArray.parseArray(CONTRACT_ABI));
         _jsonObj2.put("user","");
         _jsonObj2.put("funcName","getTraceInfo");
-        _jsonObj2.put("funcParam",params);
+        _jsonObj2.put("funcParam",params.toJSONString());
 
-        String responseStr2 = httpPost(URL,选手填写部分);
+        String responseStr2 = httpPost(URL,_jsonObj2.toJSONString());
         JSONArray traceInfoList  = JSON.parseArray(responseStr2);
-        JSONArray time_list = 选手填写部分;
-        JSONArray name_list = 选手填写部分;
-        JSONArray address_list = 选手填写部分;
-        JSONArray quality_list = 选手填写部分;
+        JSONArray time_list = traceInfoList.getJSONArray(0);
+        JSONArray name_list = traceInfoList.getJSONArray(1);
+        JSONArray address_list = traceInfoList.getJSONArray(2);
+        JSONArray quality_list = traceInfoList.getJSONArray(3);
 
         JSONArray _outPut = new JSONArray();
         for (int i=0;i<time_list.size();i++){
             if (i==0){
                 JSONObject _outPutObj = new JSONObject();
-                _outPutObj.put("traceNumber",选手填写部分);
-                _outPutObj.put("name",选手填写部分);
-                _outPutObj.put("produce_time",选手填写部分);
-                _outPutObj.put("timestamp",选手填写部分);
-                _outPutObj.put("from",选手填写部分);
-                _outPutObj.put("quality",选手填写部分);
-                _outPutObj.put("from_address",选手填写部分);
+                _outPutObj.put("traceNumber","traceNumber");
+                _outPutObj.put("name",food.get(2));
+                _outPutObj.put("produce_time",time_list.get(0));
+                _outPutObj.put("timestamp",time_list.get(i));
+                _outPutObj.put("from",address_list.get(0));
+                _outPutObj.put("quality",quality_list.get(i));
+                _outPutObj.put("from_address",address_list.get(i));
                 _outPut.add(_outPutObj);
             }else{
                 JSONObject _outPutObj = new JSONObject();
-                _outPutObj.put("traceNumber",选手填写部分);
-                _outPutObj.put("name",选手填写部分);
-                _outPutObj.put("produce_time",选手填写部分);
-                _outPutObj.put("timestamp",选手填写部分);
-                _outPutObj.put("from",选手填写部分);
-                _outPutObj.put("to",选手填写部分);
-                _outPutObj.put("quality",选手填写部分);
-                _outPutObj.put("from_address",选手填写部分);
-                _outPutObj.put("to_address",选手填写部分);
+                _outPutObj.put("traceNumber","traceNumber");
+                _outPutObj.put("name",name_list.get(i));
+                _outPutObj.put("produce_time",time_list.get(0));
+                _outPutObj.put("timestamp",time_list.get(i));
+                _outPutObj.put("from",address_list.get(0));
+                _outPutObj.put("to",address_list.get(i));
+                _outPutObj.put("quality",quality_list.get(i));
+                _outPutObj.put("from_address",address_list.get(i-1));
+                _outPutObj.put("to_address",address_list.get(i));
                 _outPut.add(_outPutObj);
             }
         }

@@ -15,9 +15,9 @@ const Header = {
   props: ['login', 'user'],
   template: `
     <div class="header">
-      <img src="选手填写部分" />
-      <h3>选手填写部分</h3>
-      <span v-if="login" class="user-name">选手填写部分</span>
+      <img src=""./static/images/logo.png" />
+      <h3>食品溯源平台</h3>
+      <span v-if="login" class="user-name">{{ user }}</span>
     </div>
     `
   }

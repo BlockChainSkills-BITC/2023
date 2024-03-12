@@ -5,27 +5,27 @@ const Login = {
       // 用户身份
       users: [
         {
-          name: 选手填写部分,
+          name: "生产商",
           userName: 'producer',
-          component: 选手填写部分,
+          component: Farm,
         },
         {
-          name: 选手填写部分,
+          name: "中间商",
           userName: 'distributor',
-          component: 选手填写部分,
+          component: Agent,
         },
         {
-          name: 选手填写部分,
+          name: "超市",
           userName: 'retailer',
-          component: 选手填写部分,
+          component: Mall,
         },
         {
-          name: 选手填写部分,
+          name: "消费者",
           userName: 'consumer',
-          component: 选手填写部分,
+          component: Consumer,
         },
       ],
-      currentUser: 选手填写部分, // 当前用户
+      currentUser: null, // 当前用户
       address: '', // 角色地址
       countdown: 5, // 倒计时时间
       loginItem: '', // 登录用户信息
@@ -35,35 +35,35 @@ const Login = {
   template: `
     <div class="login">
       <!-- 角色选择 -->
-      <h3 v-if="currentUser === null">选手填写部分</h3>
+      <h3 v-if="currentUser === null">请选择您的角色</h3>
       <el-row :gutter="80"  v-if="currentUser === null">
-        <el-col :span="6" v-for="选手填写部分" :key="index">
-          <div @click="选手填写部分">选手填写部分</div>
+        <el-col :span="6" v-for="(user,index) in users" :key="index">
+          <div @click="handleClick(user)">{{ user.name }}</div>
         </el-col>
       </el-row>
 
       <!-- 角色登录 -->
       <div v-else class="is-login">
-        <h3>登录中......(倒计时：{{ 选手填写部分 }} 秒)</h3>
+        <h3>登录中......(倒计时：{{ countdown }} 秒)</h3>
         <div>角色: 
-          <span>{{ 选手填写部分 }}</span>
+          <span>{{ loginItem.name }}</span>
         </div>
 
         <!-- 非消费者则显示角色地址 -->
-        <div v-if="选手填写部分">角色地址:
-          <span>{{ 选手填写部分 }}</span>
+        <div v-if="loginItem.name !== '消费者'">角色地址:
+          <span>{{ address }}</span>
         </div>
 
         <!-- 直接登录按钮 -->
-        <el-button type="primary" 选手填写部分>直接登录</el-button>
+        <el-button type="primary" @click="clearTimer">直接登录</el-button>
       </div>
     </div>
   `,
   methods: {
     // 登录时有个5秒的倒计时，这里是在点击直接登录时，清楚倒计时，直接跳到相关页面
     clearTimer() {
-      clearInterval(选手填写部分);
-      this.$emit(选手填写部分, {
+      clearInterval(this.timer);
+      this.$emit("login", {
         component: this.loginItem.component, 
         user: this.loginItem.name, 
       });
@@ -72,24 +72,24 @@ const Login = {
     countdownInterval({ component, name: user }) {
       this.timer = setInterval(() => {
         if(this.countdown <= 0){
-          选手填写部分;
+          this.clearTimer();
         }
-        选手填写部分;
-      }, 选手填写部分);
+        this.countdown -= 1;
+      },1000);
     },
     // 点击用户登录，获取用户地址
     handleClick(item) {
       this.loginItem = item;
       // 处理消费者角色，其他三个角色都有一个角色地址
-      if (item.userName !== 选手填写部分) {
+      if (item.userName !== 'consumer') {
         axios({
           method: 'get',
           url: `/userinfo?userName=${item.userName}`,
         })
         .then(ret => {
-          this.address = 选手填写部分;
-          this.currentUser = 选手填写部分;
-          this.countdownInterval(选手填写部分);
+          this.address = ret.data.address;
+          this.currentUser = item.name;
+          this.countdownInterval(item);
         }) 
         .catch(err => {
           console.log(err)
