@@ -523,9 +523,21 @@ public class IndexController {
         try {
             httpResponse = httpClient.execute(httpPost);
             result = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+            System.out.println("result" + result);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return result;
+        JSONArray tmp_array = JSONArray.parseArray(result);
+        JSONArray tmp2 = new JSONArray();
+        for (int i = 0; i < tmp_array.size(); i++) {
+            if (!tmp_array.get(i).toString().startsWith("[")) {
+                tmp2.add(tmp_array.get(i).toString());
+                continue;
+            }
+            tmp2.add(JSONArray.parseArray(tmp_array.get(i).toString()));
+        }
+
+
+        return tmp2.toJSONString();
     }
 }
