@@ -31,12 +31,12 @@ public class IndexController {
     private static String CONTRACT_NAME = "Trace";
     private static String CONTRACT_ADDRESS;
     private static final String CONTRACT_ABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"traceNumber\",\"type\":\"uint256\"}],\"name\":\"getFood\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"string\"},{\"name\":\"\",\"type\":\"string\"},{\"name\":\"\",\"type\":\"string\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"traceNumber\",\"type\":\"uint256\"}],\"name\":\"getTraceInfo\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256[]\"},{\"name\":\"\",\"type\":\"string[]\"},{\"name\":\"\",\"type\":\"address[]\"},{\"name\":\"\",\"type\":\"uint8[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"traceNumber\",\"type\":\"uint256\"},{\"name\":\"traceName\",\"type\":\"string\"},{\"name\":\"quality\",\"type\":\"uint8\"}],\"name\":\"newFood\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"traceNumber\",\"type\":\"uint256\"},{\"name\":\"traceName\",\"type\":\"string\"},{\"name\":\"quality\",\"type\":\"uint8\"}],\"name\":\"addTraceInfoByDistributor\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"account\",\"type\":\"address\"}],\"name\":\"isRetailer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceDistributor\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getAllFood\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"account\",\"type\":\"address\"}],\"name\":\"addDistributor\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"account\",\"type\":\"address\"}],\"name\":\"addRetailer\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"account\",\"type\":\"address\"}],\"name\":\"isDistributor\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"traceNumber\",\"type\":\"uint256\"},{\"name\":\"traceName\",\"type\":\"string\"},{\"name\":\"quality\",\"type\":\"uint8\"}],\"name\":\"addTraceInfoByRetailer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceRetailer\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"account\",\"type\":\"address\"}],\"name\":\"addProducer\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"account\",\"type\":\"address\"}],\"name\":\"isProducer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceProducer\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"producer\",\"type\":\"address\"},{\"name\":\"distributor\",\"type\":\"address\"},{\"name\":\"retailer\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"account\",\"type\":\"address\"}],\"name\":\"RetailerAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"account\",\"type\":\"address\"}],\"name\":\"RetailerRemoved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"account\",\"type\":\"address\"}],\"name\":\"DistributorAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"account\",\"type\":\"address\"}],\"name\":\"DistributorRemoved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"account\",\"type\":\"address\"}],\"name\":\"ProducerAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"account\",\"type\":\"address\"}],\"name\":\"ProducerRemoved\",\"type\":\"event\"}]";
-
     //填写用户地址信息
     //192.168.1.103
     private static String PRODUCER_ADDRESS;
     private static String DISTRIBUTOR_ADDRESS;
     private static String RETAILER_ADDRESS;
+
 
     public IndexController() {
         loadConfig();
@@ -313,6 +313,7 @@ public class IndexController {
     @GetMapping(path="/newtracelist", produces=MediaType.APPLICATION_JSON_VALUE)
     public String get_latest(){
         JSONArray num_list = get_food_list();
+        System.out.println(num_list.toJSONString());
         JSONArray num_list2 = num_list.getJSONArray(0);
         JSONArray resList = new JSONArray();
 
@@ -399,6 +400,7 @@ public class IndexController {
         _jsonObj.put("funcName","getAllFood");
 
         String responseStr = httpPost(URL,_jsonObj.toJSONString());
+        System.out.println(responseStr);
         JSONArray responseJsonObj = JSON.parseArray(responseStr);
         return responseJsonObj;
     }
@@ -442,6 +444,7 @@ public class IndexController {
      */
     private JSONArray get_trace(String traceNumber){
         //获取食品基本信息
+        System.out.println("traceNumber:"+traceNumber);
         JSONArray params = JSONArray.parseArray("["+traceNumber+"]");
 
         JSONObject _jsonObj = new JSONObject();
@@ -486,7 +489,7 @@ public class IndexController {
             } else {
                 JSONObject _outPutObj = new JSONObject();
                 _outPutObj.put("traceNumber", traceNumber);
-                _outPutObj.put("name", name_list.get(i));
+                _outPutObj.put("name", food.get(2));
                 _outPutObj.put("produce_time", food.get(0));
                 _outPutObj.put("timestamp", time_list.get(i));
                 _outPutObj.put("from", name_list.get(i - 1));
@@ -529,9 +532,21 @@ public class IndexController {
         try {
             httpResponse = httpClient.execute(httpPost);
             result = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+            System.out.println("result" + result);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return result;
+        JSONArray tmp_array = JSONArray.parseArray(result);
+        JSONArray tmp2 = new JSONArray();
+        for (int i = 0; i < tmp_array.size(); i++) {
+            if (!tmp_array.get(i).toString().startsWith("[")) {
+                tmp2.add(tmp_array.get(i).toString());
+                continue;
+            }
+            tmp2.add(JSONArray.parseArray(tmp_array.get(i).toString()));
+        }
+
+
+        return tmp2.toJSONString();
     }
 }
