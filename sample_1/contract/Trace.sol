@@ -30,14 +30,19 @@ contract Trace is Producer, Distributor, Retailer{
         //traceNumber 食品溯源id
         //traceName 当前用户名称
 	//quality 当前食品质量
-        function newFood(①, string traceName, uint8 quality)
-	public ② returns(③)
+        function newFood(string name,uint256 traceNumber, string traceName, uint8 quality)
+	public onlyProducer returns(address)
         {
             //④ 条件判定：traceNumber 已经存在
+            require(foods[traceNumber] == address(0),"traceNumber already exist");
             //⑤
+            FoodInfoItem food = new FoodInfoItem(name,traceName,quality,msg.sender);
             //⑥
+            foods[traceNumber]= food;
             //⑦
+            foodList.push(traceNumber);
             //⑧
+            return food;
 
             // int count = 0;
             // Table table = tf.openTable(TABLE_NAME);
@@ -55,10 +60,11 @@ contract Trace is Producer, Distributor, Retailer{
         //traceNumber 食品溯源id
         //traceName 当前用户名称
         //quality 当前食品质量
-        function addTraceInfoByDistributor(①, uint8 quality)
-	public ② returns(bool) {
+        function addTraceInfoByDistributor(uint256 traceNumber,string traceName, uint8 quality)
+	public onlyDistributor returns(bool) {
             //③ 条件判定：traceNumber不存在
-            return FoodInfoItem(foods[traceNumber]).④;
+            require(foods[traceNumber] !=address(0),"traceNumber does not exist");
+            return FoodInfoItem(foods[traceNumber]).addTraceInfoByDistributor(traceName,msg.sender,quality);
         }
 
         //食品出售过程中增加溯源信息的接口
@@ -66,10 +72,10 @@ contract Trace is Producer, Distributor, Retailer{
         //traceNumber 食品溯源id
         //traceName 当前用户名称
         //quality 当前食品质量
-        function addTraceInfoByRetailer(①, uint8 quality)
-	public ② returns(bool) {
-            require(③, "traceNumber does not exist");
-            return FoodInfoItem(foods[traceNumber]).④;
+        function addTraceInfoByRetailer(uint256 traceNumber,string traceName,  uint8 quality)
+	public onlyRetailer returns(bool) {
+            require(foods[traceNumber] !=address(0), "traceNumber does not exist");
+            return FoodInfoItem(foods[traceNumber]).addTraceInfoByRetailer(traceName,msg.sender,quality);
         }
 
         //获取食品溯源信息接口
