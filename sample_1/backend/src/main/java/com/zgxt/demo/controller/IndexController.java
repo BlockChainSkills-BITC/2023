@@ -112,11 +112,11 @@ public class IndexController {
 
         //生产商生产食品
         if(jsonParam == null){
-            选手填写部分;
+            return _outPutObj.toJSONString();
         }
 
-        int trace_number = 选手填写部分;
-        String food_name = 选手填写部分;
+        int trace_number = (int)jsonParam.get("traceNumber");
+        String food_name = jsonParam.getString("foodName");
         String trace_name = 选手填写部分;
         int quality = 选手填写部分;
 
@@ -127,19 +127,19 @@ public class IndexController {
         _jsonObj.put("contractAbi",JSONArray.parseArray(CONTRACT_ABI));
         _jsonObj.put("user",PRODUCER_ADDRESS);
         _jsonObj.put("funcName",选手填写部分);
-        _jsonObj.put("funcParam",选手填写部分);
+        _jsonObj.put("funcParam",params.toJSONString());
 
-        String responseStr = httpPost(URL,选手填写部分);
+        String responseStr = httpPost(URL,_jsonObj.toJSONString());
         JSONObject responseJsonObj = JSON.parseObject(responseStr);
         String msg = responseJsonObj.getString("message");
         if (msg.equals("Success")){
-            _outPutObj.put("ret",选手填写部分);
+            _outPutObj.put("ret",1);
             _outPutObj.put("msg",msg);
         }else{
-            _outPutObj.put("ret",选手填写部分);
+            _outPutObj.put("ret",0);
             _outPutObj.put("msg",msg);
         }
-        return 选手填写部分;
+        return _outPutObj.toJSONString();
     }
 
     /**
@@ -460,7 +460,7 @@ public class IndexController {
 
         String responseStr2 = httpPost(URL,选手填写部分);
         JSONArray traceInfoList  = JSON.parseArray(responseStr2);
-        JSONArray time_list = 选手填写部分;
+        JSONArray time_list = traceInfoList.getJSONArray(0);
         JSONArray name_list = 选手填写部分;
         JSONArray address_list = 选手填写部分;
         JSONArray quality_list = 选手填写部分;
@@ -469,7 +469,7 @@ public class IndexController {
         for (int i=0;i<time_list.size();i++){
             if (i==0){
                 JSONObject _outPutObj = new JSONObject();
-                _outPutObj.put("traceNumber",选手填写部分);
+                _outPutObj.put("traceNumber",traceNumber);
                 _outPutObj.put("name",选手填写部分);
                 _outPutObj.put("produce_time",选手填写部分);
                 _outPutObj.put("timestamp",选手填写部分);
@@ -483,7 +483,7 @@ public class IndexController {
                 _outPutObj.put("name",选手填写部分);
                 _outPutObj.put("produce_time",选手填写部分);
                 _outPutObj.put("timestamp",选手填写部分);
-                _outPutObj.put("from",选手填写部分);
+                _outPutObj.put("from",address_list.get(i-1));
                 _outPutObj.put("to",选手填写部分);
                 _outPutObj.put("quality",选手填写部分);
                 _outPutObj.put("from_address",选手填写部分);

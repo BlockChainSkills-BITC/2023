@@ -37,8 +37,8 @@ const Login = {
       <!-- 角色选择 -->
       <h3 v-if="currentUser === null">选手填写部分</h3>
       <el-row :gutter="80"  v-if="currentUser === null">
-        <el-col :span="6" v-for="选手填写部分" :key="index">
-          <div @click="选手填写部分">选手填写部分</div>
+        <el-col :span="6" v-for="(user,index) in users" :key="index">
+          <div @click="handleClick(user)">user.name</div>
         </el-col>
       </el-row>
 
