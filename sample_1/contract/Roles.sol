@@ -8,18 +8,18 @@ library Roles {
         mapping (address => bool) bearer;
     }
 
-    function add(①, address account) internal {
-        require(!③, "Roles: account already has role");
-        role.④ = true;
+    function add(Role storage role, address account) internal {
+        require(!has(role,account), "Roles: account already has role");
+        role.bearer[account] = true;
     }
 
-    function remove(①, address account) ② {
-        require(③, "Roles: account does not have role");
-        role.④ = false;
+    function remove(Role storage role, address account) internal {
+        require(has(role, account), "Roles: account does not have role");
+        role.bearer[account] = false;
     }
 
-    function has(①, address account) ② returns (bool) {
-        require(③, "Roles: account is the zero address");
-        return role.④;
+    function has(Role storage role, address account) internal view returns (bool) {
+        require(account !=address(0), "Roles: account is the zero address");
+        return role.bearer[account];
     }
 }
